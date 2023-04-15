@@ -1,5 +1,5 @@
 from rest_framework import generics
-
+from rest_framework.response import Response
 from .models import Category
 from .serialazers import CategorySerializer
 from rest_framework.pagination import PageNumberPagination
@@ -10,7 +10,11 @@ class StoryCategoryPaginationAPIView(PageNumberPagination):
     page_size = 5
     page_query_param = 'page'
     max_page_size = 1000
+
     # permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def get_paginated_response(self, data):
+        return Response({"count": self.page.paginator.count, "results": data})
 
 
 class StoryCategoryListAPIView(generics.ListCreateAPIView):
