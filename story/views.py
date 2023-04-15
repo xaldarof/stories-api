@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework.exceptions import NotFound
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -13,7 +14,10 @@ class StoryPaginationAPIView(PageNumberPagination):
     max_page_size = 1000
 
     def get_paginated_response(self, data):
-        return Response({"count": self.page.paginator.count, "results": data})
+        if data:
+            return Response({"count": self.page.paginator.count, "results": data})
+        else:
+            return Response({"": ""})
 
 
 class StoryListAPIView(generics.ListCreateAPIView):
@@ -22,8 +26,8 @@ class StoryListAPIView(generics.ListCreateAPIView):
     permission_classes = (AllowAny,)
 
     def get_queryset(self):
-        category_id = self.request.query_params.get('categoryId')
-        if category_id is not None:
+        category_id = self.request.query_params.get('categoryId', "")
+        if category_id:
             queryset = Story.objects.filter(category_id=category_id)
         else:
             queryset = Story.objects.all()

@@ -7,6 +7,7 @@ from category.models import Category
 
 
 class Story(models.Model):
+    title = models.CharField(max_length=500)
     body = models.CharField(max_length=1000)
     time_create = models.DateTimeField(auto_now_add=True)
     time_update = models.DateTimeField(auto_now=True)
