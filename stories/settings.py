@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'story',
     'category',
+    'auth_user',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',

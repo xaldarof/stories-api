@@ -1,9 +1,10 @@
 from rest_framework import generics
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+
 from .models import Category
 from .serialazers import CategorySerializer
-from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, IsAdminUser, AllowAny
 
 
 class StoryCategoryPaginationAPIView(PageNumberPagination):
@@ -34,11 +35,3 @@ class StoryCategoryDestroyAPIView(generics.RetrieveDestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     # permission_classes = (IsAdminReadOnly,)
-
-
-"""
-{
-"body" : "Але, мама, дай папе трубку. - Але, папа, Спартак чемпион???",
-"category_id":1
-}
-"""
