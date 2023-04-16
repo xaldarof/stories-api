@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.generics import RetrieveAPIView
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -24,3 +25,11 @@ class RegistrationAPIView(APIView):
         }, status=status.HTTP_201_CREATED)
 
     permission_classes = (AllowAny,)
+
+
+class ProfileView(RetrieveAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UserSerializer
+
+    def get_object(self):
+        return self.request.user
