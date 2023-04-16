@@ -12,7 +12,6 @@ urlpatterns = [
     path('api/v1/story/delete/<int:pk>', StoryDestroyAPIView.as_view()),
 
     # category
-    path('admin/', admin.site.urls),
     path('api/v1/categories/', StoryCategoryListAPIView.as_view()),
     path('api/v1/category/<int:pk>/', StoryCategoryUpdateAPIView.as_view()),
     path('api/v1/category/delete/<int:pk>', StoryCategoryDestroyAPIView.as_view()),

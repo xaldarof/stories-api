@@ -1,5 +1,5 @@
+from django.core.paginator import Paginator, EmptyPage
 from rest_framework import generics
-from rest_framework.exceptions import NotFound
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -9,29 +9,41 @@ from .serialazers import StorySerializer
 
 
 class StoryPaginationAPIView(PageNumberPagination):
-    page_size = 20
+    page_size = 10
     page_query_param = 'page'
     max_page_size = 1000
 
     def get_paginated_response(self, data):
-        if data:
-            return Response({"count": self.page.paginator.count, "results": data})
+        category_id = self.request.query_params.get('categoryId', "1")
+        query_set = Story.objects.filter(category_id=category_id, is_published=True).order_by('time_create')
+        paginator = Paginator(query_set, 10)
+        page_size = self.request.query_params.get('page')
+        if page_size:
+            try:
+                page = paginator.page(page_size)
+            except EmptyPage:
+                page = paginator.page(paginator.num_pages)
+
+            serializer = StorySerializer(data=page, many=True)
+            serializer.is_valid()
+            return Response({
+                "count": paginator.count,
+                'results': serializer.data,
+            })
         else:
-            return Response({"": ""})
+            serializer = StorySerializer(data=query_set, many=True)
+            serializer.is_valid()
+            return Response({
+                "count": paginator.count,
+                "results": serializer.data,
+            })
 
 
 class StoryListAPIView(generics.ListCreateAPIView):
     serializer_class = StorySerializer
+    queryset = Story.objects.all()
     pagination_class = StoryPaginationAPIView
     permission_classes = (AllowAny,)
-
-    def get_queryset(self):
-        category_id = self.request.query_params.get('categoryId', "")
-        if category_id:
-            queryset = Story.objects.filter(category_id=category_id)
-        else:
-            queryset = Story.objects.all()
-        return queryset
 
 
 class StoryUpdateAPIView(generics.RetrieveUpdateAPIView):
