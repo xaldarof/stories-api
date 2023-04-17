@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from category.serialazers import CategorySerializer
@@ -13,20 +14,33 @@ class AuthorSer(serializers.ModelSerializer):
 
 
 class StoryViewSerializer(serializers.ModelSerializer):
+    user_id = serializers.SerializerMethodField()
+    story_id = serializers.IntegerField()
+
     class Meta:
         model = StoryView
         fields = ("id", "user_id", "story_id")
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        is_own = Story.objects.get(pk=validated_data['story_id']).user_id == user.id
+        print(is_own)
+        return StoryView.objects.create(story_id=validated_data['story_id'], user=user)
+
+    @staticmethod
+    def get_user_id(obj):
+        return obj.user.id
 
 
 class StorySerializer(serializers.ModelSerializer):
     author = serializers.SerializerMethodField()
     timeCreate = serializers.DateTimeField(source='time_create', read_only=True)
     categoryId = serializers.IntegerField(source='category.id')
-    view_count = serializers.SerializerMethodField()
+    viewCount = serializers.SerializerMethodField(method_name='get_view_count')
 
     class Meta:
         model = Story
-        fields = ("id", "title", "body", "view_count", "timeCreate", "author", "categoryId")
+        fields = ("id", "title", "body", "viewCount", "timeCreate", "author", "categoryId")
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -35,13 +49,13 @@ class StorySerializer(serializers.ModelSerializer):
                                     category=Category.objects.get(pk=validated_data['category']['id'], ),
                                     user=user)
 
-    def get_author(self, obj):
+    @staticmethod
+    def get_author(obj):
         return {"username": obj.user.username,
                 "userid": obj.user.id
                 }
 
-    def get_view_count(self, obj):
-        print("Title " + obj.title + " id : " + str(obj.id) + " ")
+    @staticmethod
+    def get_view_count(obj):
         count = StoryView.objects.filter(story_id=obj.id).count()
-        print(count)
         return count
