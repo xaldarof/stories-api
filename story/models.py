@@ -13,4 +13,11 @@ class Story(models.Model):
     time_update = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=False)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, null=True)
-    user = models.ForeignKey(get_user_model(), verbose_name='Пользователь', on_delete=models.CASCADE)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+
+
+
+class StoryView(models.Model):
+    time_create = models.DateTimeField(auto_now_add=True)
+    story = models.ForeignKey(Story, on_delete=models.CASCADE)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)

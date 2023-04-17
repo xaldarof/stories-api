@@ -4,8 +4,8 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from .models import Story
-from .serialazers import StorySerializer
+from .models import Story, StoryView
+from .serialazers import StorySerializer, StoryViewSerializer
 
 
 class StoryPaginationAPIView(PageNumberPagination):
@@ -55,6 +55,12 @@ class StoryUpdateAPIView(generics.RetrieveUpdateAPIView):
 class StoryDestroyAPIView(generics.RetrieveDestroyAPIView):
     queryset = Story.objects.all()
     serializer_class = StorySerializer
+    # permission_classes = (IsAdminReadOnly,)
+
+
+class StoryViewListApiView(generics.ListCreateAPIView):
+    queryset = StoryView.objects.all()
+    serializer_class = StoryViewSerializer
     # permission_classes = (IsAdminReadOnly,)
 
 
