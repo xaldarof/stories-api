@@ -35,12 +35,14 @@ class StoryViewSerializer(serializers.ModelSerializer):
 class StorySerializer(serializers.ModelSerializer):
     author = serializers.SerializerMethodField()
     timeCreate = serializers.DateTimeField(source='time_create', read_only=True)
+    isPremium = serializers.SerializerMethodField(method_name='get_is_premium', read_only=True)
+    isFrozen = serializers.BooleanField(source='is_frozen', read_only=True)
     categoryId = serializers.IntegerField(source='category.id')
     viewCount = serializers.SerializerMethodField(method_name='get_view_count')
 
     class Meta:
         model = Story
-        fields = ("id", "title", "body", "viewCount", "timeCreate", "author", "categoryId")
+        fields = ("id", "title", "body", "isFrozen", "isPremium", "viewCount", "timeCreate", "author", "categoryId")
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -59,3 +61,8 @@ class StorySerializer(serializers.ModelSerializer):
     def get_view_count(obj):
         count = StoryView.objects.filter(story_id=obj.id).count()
         return count
+
+    @staticmethod
+    def get_is_premium(obj):
+        count = StoryView.objects.filter(story_id=obj.id).count()
+        return count > 20 or obj.user.is_superuser

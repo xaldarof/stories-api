@@ -17,13 +17,11 @@ class StoryPaginationAPIView(PageNumberPagination):
 
     def get_paginated_response(self, data):
         category_id = self.request.query_params.get('categoryId', None)
-        query_set = Story.objects.filter()
         if category_id:
             query_set = Story.objects.filter(category_id=category_id).order_by('?')
         else:
             query_set = Story.objects.filter().order_by('?')
         paginator = Paginator(query_set, 10)
-
         page_size = self.request.query_params.get('page')
         if page_size:
             try:
@@ -53,7 +51,6 @@ class UserStoryPaginationAPIView(PageNumberPagination):
 
     def get_paginated_response(self, data):
         category_id = self.request.query_params.get('categoryId', None)
-        query_set = Story.objects.filter()
         if category_id:
             query_set = Story.objects.filter(category_id=category_id).order_by('-time_create')
         else:

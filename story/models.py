@@ -12,6 +12,8 @@ class Story(models.Model):
     time_create = models.DateTimeField(auto_now_add=True)
     time_update = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=False)
+    is_premium = models.BooleanField(default=False)
+    is_frozen = models.BooleanField(default=False)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, null=True)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
