@@ -19,9 +19,45 @@ class StoryPaginationAPIView(PageNumberPagination):
         category_id = self.request.query_params.get('categoryId', None)
         query_set = Story.objects.filter()
         if category_id:
-            query_set = Story.objects.filter(category_id=category_id, is_published=True).order_by('time_create')
+            query_set = Story.objects.filter(category_id=category_id).order_by('?')
         else:
-            query_set = Story.objects.filter(is_published=True).order_by('time_create')
+            query_set = Story.objects.filter().order_by('?')
+        paginator = Paginator(query_set, 10)
+
+        page_size = self.request.query_params.get('page')
+        if page_size:
+            try:
+                page = paginator.page(page_size)
+            except EmptyPage:
+                page = paginator.page(paginator.num_pages)
+
+            serializer = StorySerializer(data=page, many=True)
+            serializer.is_valid()
+            return Response({
+                "count": paginator.count,
+                'results': serializer.data,
+            })
+        else:
+            serializer = StorySerializer(data=query_set, many=True)
+            serializer.is_valid()
+            return Response({
+                "count": paginator.count,
+                "results": serializer.data,
+            })
+
+
+class UserStoryPaginationAPIView(PageNumberPagination):
+    page_size = 10
+    page_query_param = 'page'
+    max_page_size = 1000
+
+    def get_paginated_response(self, data):
+        category_id = self.request.query_params.get('categoryId', None)
+        query_set = Story.objects.filter()
+        if category_id:
+            query_set = Story.objects.filter(category_id=category_id).order_by('-time_create')
+        else:
+            query_set = Story.objects.filter().order_by('-time_create')
         paginator = Paginator(query_set, 10)
 
         page_size = self.request.query_params.get('page')
@@ -68,11 +104,12 @@ class StoryDestroyAPIView(generics.RetrieveDestroyAPIView):
 class UserStoryListAPIView(generics.ListAPIView):
     queryset = Story.objects.all()
     serializer_class = StorySerializer
+    pagination_class = UserStoryPaginationAPIView
     permission_classes = (IsAuthenticated,)
 
-    def get_queryset(self):
-        user_id = self.request.user.id
-        return Story.objects.filter(user_id=user_id)
+    # def get_queryset(self):
+    #     user_id = self.request.user.id
+    #     return
 
 
 class UserStoryStatsListAPIView(APIView):
