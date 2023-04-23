@@ -29,14 +29,14 @@ class StoryPaginationAPIView(PageNumberPagination):
             except EmptyPage:
                 page = paginator.page(paginator.num_pages)
 
-            serializer = StorySerializer(data=page, many=True)
+            serializer = StorySerializer(data=page, many=True, context={"request": self.request})
             serializer.is_valid()
             return Response({
                 "count": paginator.count,
                 'results': serializer.data,
             })
         else:
-            serializer = StorySerializer(data=query_set, many=True)
+            serializer = StorySerializer(data=query_set, many=True, context={"request": self.request})
             serializer.is_valid()
             return Response({
                 "count": paginator.count,
@@ -66,14 +66,14 @@ class UserStoryPaginationAPIView(PageNumberPagination):
             except EmptyPage:
                 page = paginator.page(paginator.num_pages)
 
-            serializer = StorySerializer(data=page, many=True)
+            serializer = StorySerializer(data=page, many=True, context={"request": self.request})
             serializer.is_valid()
             return Response({
                 "count": paginator.count,
                 'results': serializer.data,
             })
         else:
-            serializer = StorySerializer(data=query_set, many=True)
+            serializer = StorySerializer(data=query_set, many=True, context={"request": self.request})
             serializer.is_valid()
             return Response({
                 "count": paginator.count,

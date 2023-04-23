@@ -53,9 +53,8 @@ class StorySerializer(serializers.ModelSerializer):
             "categoryId")
 
     def get_isOwner(self, validated_data):
-        # user = self.context['request'].user
-        # print(user)
-        return False
+        user = self.context.get('request').user.id
+        return user == validated_data.user_id
 
     def create(self, validated_data):
         user = self.context['request'].user
