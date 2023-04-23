@@ -52,9 +52,11 @@ class UserStoryPaginationAPIView(PageNumberPagination):
     def get_paginated_response(self, data):
         category_id = self.request.query_params.get('categoryId', None)
         if category_id:
-            query_set = Story.objects.filter(category_id=category_id, user_id=self.request.user.id).order_by('-time_create')
+            query_set = Story.objects.filter(category_id=category_id,
+                                             user_id=self.request.query_params['userId']).order_by(
+                '-time_create')
         else:
-            query_set = Story.objects.filter(user_id=self.request.user.id).order_by('-time_create')
+            query_set = Story.objects.filter(user_id=self.request.query_params['userId']).order_by('-time_create')
         paginator = Paginator(query_set, 10)
 
         page_size = self.request.query_params.get('page')
@@ -83,7 +85,7 @@ class StoryListAPIView(generics.ListCreateAPIView):
     serializer_class = StorySerializer
     queryset = Story.objects.all()
     pagination_class = StoryPaginationAPIView
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticated,)
 
 
 class StoryUpdateAPIView(generics.RetrieveUpdateAPIView):
@@ -132,11 +134,3 @@ class StoryViewListApiView(generics.ListCreateAPIView):
     queryset = StoryView.objects.all()
     serializer_class = StoryViewSerializer
     permission_classes = (IsAuthenticated,)
-
-
-"""
-{
-"body" : "Але, мама, дай папе трубку. - Але, папа, Спартак чемпион???",
-"category_id":1
-}
-"""

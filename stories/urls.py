@@ -12,7 +12,7 @@ urlpatterns = [
     path('api/v1/stories/', StoryListAPIView.as_view()),
     path('api/v1/story/<int:pk>/', StoryUpdateAPIView.as_view()),
     path('api/v1/story/delete/<int:pk>', StoryDestroyAPIView.as_view()),
-    path('api/v1/stories/mine', UserStoryListAPIView.as_view()),
+    path('api/v1/stories/user', UserStoryListAPIView.as_view()),
     path('api/v1/stories/stats', UserStoryStatsListAPIView.as_view()),
 
     # view

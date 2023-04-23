@@ -6,6 +6,8 @@ from rest_framework import serializers
 from category.serialazers import CategorySerializer
 from .models import Story, Category, StoryView
 
+from rest_framework.fields import CurrentUserDefault
+
 
 class AuthorSer(serializers.ModelSerializer):
     class Meta:
@@ -25,7 +27,10 @@ class StoryViewSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         is_own = Story.objects.get(pk=validated_data['story_id']).user_id == user.id
         print(is_own)
-        return StoryView.objects.create(story_id=validated_data['story_id'], user=user)
+        if not is_own:
+            return StoryView.objects.create(story_id=validated_data['story_id'], user=user)
+        else:
+            return StoryView.objects.get(pk=1)
 
     @staticmethod
     def get_user_id(obj):
@@ -34,6 +39,7 @@ class StoryViewSerializer(serializers.ModelSerializer):
 
 class StorySerializer(serializers.ModelSerializer):
     author = serializers.SerializerMethodField()
+    isOwner = serializers.SerializerMethodField()
     timeCreate = serializers.DateTimeField(source='time_create', read_only=True)
     isPremium = serializers.SerializerMethodField(method_name='get_is_premium', read_only=True)
     isFrozen = serializers.BooleanField(source='is_frozen', read_only=True)
@@ -42,7 +48,14 @@ class StorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Story
-        fields = ("id", "title", "body", "isFrozen", "isPremium", "viewCount", "timeCreate", "author", "categoryId")
+        fields = (
+            "id", "title", "body", "isFrozen", "isOwner", "isPremium", "viewCount", "timeCreate", "author",
+            "categoryId")
+
+    def get_isOwner(self, validated_data):
+        # user = self.context['request'].user
+        # print(user)
+        return False
 
     def create(self, validated_data):
         user = self.context['request'].user
