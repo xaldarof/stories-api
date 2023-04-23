@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 
 from .models import Story, StoryView
 from .permissions import IsAdminReadOnly
-from .serialazers import StorySerializer, StoryViewSerializer
+from .serialazers import StorySerializer, StoryViewSerializer, StoryUpdateSerializer
 
 
 class StoryPaginationAPIView(PageNumberPagination):
@@ -18,9 +18,9 @@ class StoryPaginationAPIView(PageNumberPagination):
     def get_paginated_response(self, data):
         category_id = self.request.query_params.get('categoryId', None)
         if category_id:
-            query_set = Story.objects.filter(category_id=category_id).order_by('?')
+            query_set = Story.objects.filter(category_id=category_id, is_published=True).order_by('?')
         else:
-            query_set = Story.objects.filter().order_by('?')
+            query_set = Story.objects.filter(is_published=True).order_by('?')
         paginator = Paginator(query_set, 10)
         page_size = self.request.query_params.get('page')
         if page_size:
@@ -56,7 +56,8 @@ class UserStoryPaginationAPIView(PageNumberPagination):
                                              user_id=self.request.query_params['userId']).order_by(
                 '-time_create')
         else:
-            query_set = Story.objects.filter(user_id=self.request.query_params['userId']).order_by('-time_create')
+            query_set = Story.objects.filter(user_id=self.request.query_params['userId']).order_by(
+                '-time_create')
         paginator = Paginator(query_set, 10)
 
         page_size = self.request.query_params.get('page')
@@ -90,8 +91,24 @@ class StoryListAPIView(generics.ListCreateAPIView):
 
 class StoryUpdateAPIView(generics.RetrieveUpdateAPIView):
     queryset = Story.objects.all()
-    serializer_class = StorySerializer
-    permission_classes = (IsAdminReadOnly,)
+    serializer_class = StoryUpdateSerializer
+    permission_classes = (AllowAny,)
+
+
+class StoryVisibilityAPIView(APIView):
+    queryset = Story.objects.all()
+    serializer_class = StoryUpdateSerializer
+    permission_classes = (AllowAny,)
+
+    @staticmethod
+    def put(request, pk):
+        story = Story.objects.get(pk=pk)
+        if story.user.id == request.user.id:
+            story.is_published = int(request.query_params['state']) == 1
+            story.save(update_fields=['is_published'])
+            return Response({"success"})
+        else:
+            return Response({"fail"}, status=405)
 
 
 class StoryDestroyAPIView(generics.RetrieveDestroyAPIView):

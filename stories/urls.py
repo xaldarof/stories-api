@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 from story.views import StoryListAPIView, StoryUpdateAPIView, StoryDestroyAPIView, StoryViewListApiView, \
-    UserStoryListAPIView, UserStoryStatsListAPIView
+    UserStoryListAPIView, UserStoryStatsListAPIView, StoryVisibilityAPIView
 from category.views import StoryCategoryListAPIView, StoryCategoryUpdateAPIView, StoryCategoryDestroyAPIView
 from auth_user.views import RegistrationAPIView, ProfileView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
@@ -11,6 +11,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/stories/', StoryListAPIView.as_view()),
     path('api/v1/story/<int:pk>/', StoryUpdateAPIView.as_view()),
+    path('api/v1/story/visible/<int:pk>', StoryVisibilityAPIView.as_view()),
     path('api/v1/story/delete/<int:pk>', StoryDestroyAPIView.as_view()),
     path('api/v1/stories/user', UserStoryListAPIView.as_view()),
     path('api/v1/stories/stats', UserStoryStatsListAPIView.as_view()),
