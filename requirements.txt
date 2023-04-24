@@ -1,0 +1,9 @@
+Django==4.2
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.2.2
+mypy==1.2.0
+sqlparse==0.4.3
+django-stubs=1.16.0
+django-stubs-ext=0.8.0
+asgiref==3.6.0
+PyJWT==3.6.0
