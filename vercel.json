@@ -4,7 +4,8 @@
       "src": "stories/wsgi.py",
       "use": "@vercel/python",
       "config": {
-        "maxLambdaSize": "15mb"
+        "maxLambdaSize": "15mb",
+        "runtime": "python3.7"
       }
     }
   ],
