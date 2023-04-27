@@ -11,6 +11,7 @@ from .serializers import UserSerializer
 
 class RegistrationAPIView(APIView):
     serializer_class = UserSerializer
+    permission_classes = (AllowAny,)
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -23,8 +24,6 @@ class RegistrationAPIView(APIView):
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         }, status=status.HTTP_201_CREATED)
-
-    permission_classes = (AllowAny,)
 
 
 class ProfileView(RetrieveAPIView):
