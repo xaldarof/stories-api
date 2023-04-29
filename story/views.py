@@ -5,9 +5,9 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticate
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Story, StoryView
+from .models import Story, StoryView, StoryQuote
 from .permissions import IsAdminReadOnly
-from .serialazers import StorySerializer, StoryViewSerializer, StoryUpdateSerializer
+from .serialazers import StorySerializer, StoryViewSerializer, StoryUpdateSerializer, StoryQuoteSerializer
 
 
 class StoryPaginationAPIView(PageNumberPagination):
@@ -151,3 +151,16 @@ class StoryViewListApiView(generics.ListCreateAPIView):
     queryset = StoryView.objects.all()
     serializer_class = StoryViewSerializer
     permission_classes = (IsAuthenticated,)
+
+
+class StoryQuoteListApiView(generics.ListCreateAPIView):
+    queryset = StoryQuote.objects.all()
+    serializer_class = StoryQuoteSerializer
+    permission_classes = (AllowAny,)
+
+    def get_paginated_response(self, data):
+        story_id = self.request.query_params.get('storyId')
+        quotes = StoryQuote.objects.filter(story_id=story_id)
+        serializer = StoryQuoteSerializer(data=quotes, many=True, context={"request": self.request})
+        serializer.is_valid()
+        return Response({"results": serializer.data})

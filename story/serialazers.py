@@ -1,12 +1,8 @@
 from datetime import datetime
 
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from category.serialazers import CategorySerializer
-from .models import Story, Category, StoryView
-
-from rest_framework.fields import CurrentUserDefault
+from .models import Story, Category, StoryView, StoryQuote
 
 
 class AuthorSer(serializers.ModelSerializer):
@@ -35,6 +31,33 @@ class StoryViewSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_user_id(obj):
         return obj.user.id
+
+
+class StoryQuoteSerializer(serializers.ModelSerializer):
+    author = serializers.SerializerMethodField(method_name='get_user')
+    storyId = serializers.IntegerField(source='story_id')
+    timeCreate = serializers.DateTimeField(source='time_create', read_only=True)
+    isOwner = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = StoryQuote
+        fields = ("id", "author", "storyId", "body", "timeCreate", "isOwner")
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        return StoryQuote.objects.create(story_id=validated_data['story_id'], user=user,
+                                         body=validated_data['body'])
+
+    @staticmethod
+    def get_user(obj):
+        return {
+            "username": obj.user.username,
+            "id": obj.user.id
+        }
+
+    def get_isOwner(self, validated_data):
+        user = self.context.get('request').user.id
+        return user == validated_data.user_id
 
 
 class StorySerializer(serializers.ModelSerializer):

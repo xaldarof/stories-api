@@ -22,3 +22,10 @@ class StoryView(models.Model):
     time_create = models.DateTimeField(auto_now_add=True)
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True, blank=True)
+
+
+class StoryQuote(models.Model):
+    time_create = models.DateTimeField(auto_now_add=True)
+    story = models.ForeignKey(Story, on_delete=models.CASCADE)
+    body = models.CharField(max_length=5000)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True, blank=True)
