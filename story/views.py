@@ -1,10 +1,14 @@
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage
+from django.db.models import Count, Sum
+from django.http import JsonResponse
 from rest_framework import generics
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from auth_user.serializers import UserSerializer
 from .models import Story, StoryView, StoryQuote
 from .permissions import IsAdminReadOnly
 from .serialazers import StorySerializer, StoryViewSerializer, StoryUpdateSerializer, StoryQuoteSerializer
@@ -163,4 +167,42 @@ class StoryQuoteListApiView(generics.ListCreateAPIView):
         quotes = StoryQuote.objects.filter(story_id=story_id)
         serializer = StoryQuoteSerializer(data=quotes, many=True, context={"request": self.request})
         serializer.is_valid()
+        return Response({"results": serializer.data})
+
+
+class TopUsersListApiView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, *args):
+        top_users = StoryView.objects.values('story').annotate(story_count=Count('story')).order_by('-story_count')[
+                    :100]
+        print(top_users)
+        # serializer = StorySerializer(data=top_users, many=True)
+        # serializer.is_valid()
+        # for i in top_users:
+        # print("Views : " + str(i))
+        return Response({"results": "serializer.data"})
+
+
+class TopActiveUsersListApiView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, *args):
+        top_users = User.objects.filter().annotate(num_views=Count('storyview')).order_by(
+            '-num_views')[:100]
+        serializer = UserSerializer(top_users, many=True)
+        for i in top_users:
+            print("Views : " + str(i.num_views))
+        return Response({"results": serializer.data})
+
+
+class TopStoriesListApiView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, *args):
+        top_users = User.objects.filter().annotate(num_views=Count('storyview')).order_by(
+            '-num_views')[:100]
+        serializer = UserSerializer(top_users, many=True)
+        for i in top_users:
+            print("Views : " + str(i.num_views))
         return Response({"results": serializer.data})
