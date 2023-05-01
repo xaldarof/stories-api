@@ -22,6 +22,7 @@ class StoryView(models.Model):
     time_create = models.DateTimeField(auto_now_add=True)
     story = models.ForeignKey(Story, on_delete=models.CASCADE)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, null=True, blank=True)
+    story_owner_id = models.IntegerField()
 
 
 class StoryQuote(models.Model):

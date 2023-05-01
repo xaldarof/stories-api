@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, F, Q
 from django.http import JsonResponse
 from rest_framework import generics
 from rest_framework.pagination import PageNumberPagination
@@ -174,25 +174,17 @@ class TopUsersListApiView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, *args):
-        top_users = StoryView.objects.values('story').annotate(story_count=Count('story')).order_by('-story_count')[
-                    :100]
-        print(top_users)
-        # serializer = StorySerializer(data=top_users, many=True)
-        # serializer.is_valid()
-        # for i in top_users:
-        # print("Views : " + str(i))
-        return Response({"results": "serializer.data"})
+        top_users = User.objects.annotate(view_count=Count('storyview') * Count('story')).order_by('-view_count')
+        serializer = UserSerializer(top_users, many=True)
+        return Response({"results": serializer.data})
 
 
 class TopActiveUsersListApiView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, *args):
-        top_users = User.objects.filter().annotate(num_views=Count('storyview')).order_by(
-            '-num_views')[:100]
+        top_users = User.objects.annotate(view_count=Count('storyview')).order_by('-view_count')
         serializer = UserSerializer(top_users, many=True)
-        for i in top_users:
-            print("Views : " + str(i.num_views))
         return Response({"results": serializer.data})
 
 
