@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from auth_user.serializers import UserSerializer
+from notification.models import Notification
 from .models import Story, StoryView, StoryQuote
 from .permissions import IsAdminReadOnly
 from .serialazers import StorySerializer, StoryViewSerializer, StoryUpdateSerializer, StoryQuoteSerializer
@@ -139,6 +140,8 @@ class UserStoryStatsListAPIView(APIView):
         user_id = self.request.user.id
         stories = Story.objects.filter(user_id=user_id)
         views = StoryView.objects.all()
+        unread_notification_count = Notification.objects.filter(user_id=user_id, is_read=0)
+        print(unread_notification_count.query)
         story_count = stories.count()
 
         view_reach_count = 0
@@ -148,6 +151,7 @@ class UserStoryStatsListAPIView(APIView):
         return Response({"readStoriesCount": StoryView.objects.filter(user_id=user_id).count(),
                          "storyCount": story_count,
                          "viewReachCount": view_reach_count,
+                         "unreadNotificationCount": unread_notification_count.count(),
                          })
 
 
