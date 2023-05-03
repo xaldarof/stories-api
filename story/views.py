@@ -141,12 +141,9 @@ class UserStoryStatsListAPIView(APIView):
         stories = Story.objects.filter(user_id=user_id)
         views = StoryView.objects.all()
         unread_notification_count = Notification.objects.filter(user_id=user_id, is_read=0)
+        view_reach_count = views.filter(story_owner_id=user_id).count()
         print(unread_notification_count.query)
         story_count = stories.count()
-
-        view_reach_count = 0
-        for story in stories:
-            view_reach_count += views.filter(story_id=story.id).count()
 
         return Response({"readStoriesCount": StoryView.objects.filter(user_id=user_id).count(),
                          "storyCount": story_count,
