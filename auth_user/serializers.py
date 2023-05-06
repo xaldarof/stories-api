@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
@@ -10,6 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
     firstName = serializers.CharField(read_only=True, source='first_name')
     dateJoined = serializers.CharField(read_only=True, source='date_joined')
     score = serializers.SerializerMethodField()
+    isMe = serializers.SerializerMethodField()
 
     def create(self, validated_data):
         user = User.objects.create(
@@ -21,9 +23,13 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'firstName', 'lastName', 'password', 'dateJoined', 'score')
+        fields = ('id', 'username', 'email', 'isMe', 'firstName', 'lastName', 'password', 'dateJoined', 'score')
 
     def get_score(self, obj):
         viewed = StoryView.objects.filter(user_id=obj.id).count()
         posted = Story.objects.filter(user_id=obj.id).count()
         return viewed * posted
+
+    def get_isMe(self, obj):
+        user = self.context.get('request').user.id
+        return obj.id == user

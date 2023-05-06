@@ -176,7 +176,7 @@ class TopUsersListApiView(APIView):
 
     def get(self, *args):
         top_users = User.objects.annotate(view_count=Count('storyview') * Count('story')).order_by('-view_count')
-        serializer = UserSerializer(top_users, many=True)
+        serializer = UserSerializer(top_users, many=True, context={"request": self.request})
         return Response({"results": serializer.data})
 
 
