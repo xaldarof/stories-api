@@ -23,7 +23,7 @@ class RegistrationAPIView(APIView):
 
         refresh = RefreshToken.for_user(user)
         print("Fcm token", token)
-        device = FCMDevice.objects.get(registration_id=token)
+        device = FCMDevice.objects.filter(registration_id=token).first()
         if device:
             device.user = user
             device.save()
