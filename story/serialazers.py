@@ -1,7 +1,11 @@
 from datetime import datetime
 
 from django.contrib.auth.models import User
+from django.db.models import Count
+from fcm_django.models import FCMDevice
 from rest_framework import serializers
+
+from auth_user.fcm import send_notification
 from .models import Story, Category, StoryView, StoryQuote
 
 
@@ -21,11 +25,17 @@ class StoryViewSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context['request'].user
-        user_story = Story.objects.get(pk=validated_data['story_id']).user_id
-        is_own = user_story == user.id
+        story = Story.objects.get(pk=validated_data['story_id'])
+        is_own = story == user.id
         if not is_own:
-            return StoryView.objects.create(story_id=validated_data['story_id'], user=user, story_owner_id=user_story)
-        return StoryView.objects.get(pk=1)
+            story_object = StoryView.objects
+            created = story_object.create(story_id=validated_data['story_id'], user=user, story_owner_id=story.user.id)
+            current_reach_count = StoryView.objects.filter(story_owner_id=story.user.id).count()
+            if current_reach_count % 10 == 0:
+                send_notification(title="Congratulation !",
+                                  body="You reached more " + current_reach_count + " than  view !", user=story.user)
+            return created
+        return StoryView.objects.filter().first()
 
     @staticmethod
     def get_user_id(obj):
