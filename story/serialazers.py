@@ -33,7 +33,8 @@ class StoryViewSerializer(serializers.ModelSerializer):
             current_reach_count = StoryView.objects.filter(story_owner_id=story.user.id).count()
             if current_reach_count % 10 == 0:
                 send_notification(title="Congratulation !",
-                                  body="You reached more " + current_reach_count + " than  view !", user=story.user)
+                                  body="You reached more " + str(current_reach_count) + " than  view !",
+                                  user=story.user)
             return created
         return StoryView.objects.filter().first()
 
