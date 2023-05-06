@@ -1,10 +1,15 @@
+import os
+
 import firebase_admin
 from firebase_admin import credentials, messaging
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-cred = credentials.Certificate("stories-96d17-firebase-adminsdk-22ng4-1336b4a29c.json")
+from stories.settings import BASE_DIR
+
+cred = credentials.Certificate(os.path.join(BASE_DIR, "stories-96d17-firebase-adminsdk-22ng4-1336b4a29c.json"))
+
 firebase_admin.initialize_app(cred)
 
 
@@ -12,6 +17,7 @@ class NotificationAPIView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, args):
+        print(BASE_DIR)
         message = messaging.MulticastMessage(
             notification=messaging.Notification(title=self.request.data['title'], body=self.request.data['body']),
             data=dict(self.request.data['data']),
