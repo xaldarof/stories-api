@@ -55,7 +55,7 @@ class LoginAPIView(APIView):
             return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
         refresh = RefreshToken.for_user(user)
-        device = FCMDevice.objects.get(registration_id=token)
+        device = FCMDevice.objects.filter(registration_id=token).first()
         if device:
             device.user = user
             device.save()
