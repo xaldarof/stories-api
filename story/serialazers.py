@@ -22,7 +22,7 @@ class StoryViewSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = self.context['request'].user
         story = Story.objects.get(pk=validated_data['story_id'])
-        is_own = story == user.id
+        is_own = story.user.id == user.id
         if not is_own:
             story_object = StoryView.objects
             created = story_object.create(story_id=validated_data['story_id'], user=user, story_owner_id=story.user.id)
