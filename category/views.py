@@ -1,9 +1,9 @@
 from rest_framework import generics
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from story.permissions import IsAdminReadOnly
 from .models import Category
 from .serialazers import CategorySerializer
 
@@ -34,10 +34,10 @@ class UserStoryCategoryListAPIView(APIView):
 class StoryCategoryUpdateAPIView(generics.RetrieveUpdateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    # permission_classes = (IsAdminReadOnly,)
+    permission_classes = (IsAdminReadOnly,)
 
 
 class StoryCategoryDestroyAPIView(generics.RetrieveDestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    # permission_classes = (IsAdminReadOnly,)
+    permission_classes = (IsAdminReadOnly,)
