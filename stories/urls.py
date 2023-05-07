@@ -3,7 +3,8 @@ from django.urls import path
 
 from story.views import StoryListAPIView, StoryUpdateAPIView, StoryDestroyAPIView, StoryViewListApiView, \
     UserStoryListAPIView, UserStoryStatsListAPIView, StoryVisibilityAPIView, StoryQuoteListApiView, TopUsersListApiView
-from category.views import StoryCategoryListAPIView, StoryCategoryUpdateAPIView, StoryCategoryDestroyAPIView
+from category.views import StoryCategoryListAPIView, StoryCategoryUpdateAPIView, StoryCategoryDestroyAPIView, \
+    UserStoryCategoryListAPIView
 from notification.views import UserNotificationsAPIView, NotificationAPIView
 from auth_user.views import RegistrationAPIView, ProfileView, LoginAPIView
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
@@ -32,6 +33,7 @@ urlpatterns = [
     path('api/v1/users/topusers', TopUsersListApiView.as_view()),
     # category
     path('api/v1/categories/', StoryCategoryListAPIView.as_view()),
+    path('api/v1/user/categories/', UserStoryCategoryListAPIView.as_view()),
     path('api/v1/category/<int:pk>/', StoryCategoryUpdateAPIView.as_view()),
     path('api/v1/category/delete/<int:pk>', StoryCategoryDestroyAPIView.as_view()),
 

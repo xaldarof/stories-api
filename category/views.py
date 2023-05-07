@@ -1,28 +1,34 @@
 from rest_framework import generics
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .models import Category
 from .serialazers import CategorySerializer
 
 
-class StoryCategoryPaginationAPIView(PageNumberPagination):
-    page_size = 5
-    page_query_param = 'page'
-    max_page_size = 1000
+class StoryCategoryListAPIView(APIView):
+    permission_classes = (IsAuthenticated,)
 
-    # permission_classes = (IsAuthenticatedOrReadOnly,)
+    def get(self, args):
+        categories = Category.objects.filter()
+        serializer = CategorySerializer(data=categories, context={"request": self.request, "type": "for_all"},
+                                        many=True)
+        serializer.is_valid()
+        return Response({"results": serializer.data})
 
-    def get_paginated_response(self, data):
-        return Response({"count": self.page.paginator.count, "results": data})
 
+class UserStoryCategoryListAPIView(APIView):
+    permission_classes = (IsAuthenticated,)
 
-class StoryCategoryListAPIView(generics.ListCreateAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-    pagination_class = StoryCategoryPaginationAPIView
-    permission_classes = (AllowAny,)
+    def get(self, args):
+        user_id = self.request.query_params.get('userId', None)
+        categories = Category.objects.filter()
+        serializer = CategorySerializer(data=categories, context={"user_id": user_id, "type": "for_user"},
+                                        many=True)
+        serializer.is_valid()
+        return Response({"results": serializer.data})
 
 
 class StoryCategoryUpdateAPIView(generics.RetrieveUpdateAPIView):
