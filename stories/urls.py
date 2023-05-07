@@ -1,13 +1,13 @@
 from django.contrib import admin
 from django.urls import path
 
-from auth_user.fcm import NotificationAPIView
+from notification.fcm import NotificationAPIView
 from story.views import StoryListAPIView, StoryUpdateAPIView, StoryDestroyAPIView, StoryViewListApiView, \
     UserStoryListAPIView, UserStoryStatsListAPIView, StoryVisibilityAPIView, StoryQuoteListApiView, TopUsersListApiView
 from category.views import StoryCategoryListAPIView, StoryCategoryUpdateAPIView, StoryCategoryDestroyAPIView
 from notification.views import UserNotificationsAPIView
 from auth_user.views import RegistrationAPIView, ProfileView, LoginAPIView
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
 urlpatterns = [
     # story

@@ -1,11 +1,7 @@
-from datetime import datetime
-
 from django.contrib.auth.models import User
-from django.db.models import Count
-from fcm_django.models import FCMDevice
 from rest_framework import serializers
 
-from auth_user.fcm import send_notification
+from notification.fcm import send_notification
 from .models import Story, Category, StoryView, StoryQuote
 
 

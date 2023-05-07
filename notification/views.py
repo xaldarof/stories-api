@@ -1,13 +1,28 @@
-from rest_framework.views import APIView
+from firebase_admin.messaging import Notification
 
-from django.shortcuts import render
+from firebase_admin import messaging
+from firebase_admin.messaging import Notification
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from notification.models import Notification
 from notification.serializers import NotificationSerializer
-from rest_framework.response import Response
 
 
 # Create your views here.
+
+
+class NotificationAPIView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, args):
+        message = messaging.MulticastMessage(
+            notification=messaging.Notification(title=self.request.data['title'], body=self.request.data['body']),
+            data=dict(self.request.data['data']),
+            tokens=self.request.data['tokens'])
+        response = messaging.send_multicast(message)
+        return Response("success")
 
 
 class UserNotificationsAPIView(APIView):
