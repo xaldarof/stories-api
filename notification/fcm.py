@@ -23,5 +23,6 @@ def send_notification(user, title, body):
                 Message(notification=Notification(title=title, body=body)
                         ))
             print("Result: ", response)
+            print("Token was", device.registration_id)
     else:
         print("Register id not found")

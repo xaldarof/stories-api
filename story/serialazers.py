@@ -32,10 +32,10 @@ class StoryViewSerializer(serializers.ModelSerializer):
 
             print('Total reach', current_reach_count)
             print('Story reach', current_single_story_reach_count)
-            if current_reach_count % 100 == 0:
-                send_notification(title="Congratulations !",
-                                  body="Your stories reached " + str(current_reach_count) + "  views !",
-                                  user=story.user)
+            # if current_reach_count % 100 == 0:
+            #     send_notification(title="Congratulations !",
+            #                       body="Your stories reached " + str(current_reach_count) + "  views !",
+            #                       user=story.user)
             if current_single_story_reach_count % 10 == 0:
                 send_notification(title="Congratulations !",
                                   body="Story " + story.title + " reached " + str(
