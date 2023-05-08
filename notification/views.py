@@ -1,3 +1,4 @@
+from fcm_django.models import FCMDevice
 from firebase_admin.messaging import Notification
 
 from firebase_admin import messaging
@@ -23,6 +24,21 @@ class NotificationAPIView(APIView):
             tokens=self.request.data['tokens'])
         response = messaging.send_multicast(message)
         return Response("success")
+
+
+class NotificationRefreshTokenAPIView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, args):
+        new_token = self.request.data['token']
+        user = self.request.user
+        device = FCMDevice.objects.filter(user=user).first()
+        if device:
+            device.registration_id = new_token
+            device.save()
+            return Response("success")
+        else:
+            return Response("not found", status=401)
 
 
 class UserNotificationsAPIView(APIView):

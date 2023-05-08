@@ -5,7 +5,7 @@ from story.views import StoryListAPIView, StoryUpdateAPIView, StoryDestroyAPIVie
     UserStoryListAPIView, UserStoryStatsListAPIView, StoryVisibilityAPIView, StoryQuoteListApiView, TopUsersListApiView
 from category.views import StoryCategoryListAPIView, StoryCategoryUpdateAPIView, StoryCategoryDestroyAPIView, \
     UserStoryCategoryListAPIView
-from notification.views import UserNotificationsAPIView, NotificationAPIView
+from notification.views import UserNotificationsAPIView, NotificationAPIView, NotificationRefreshTokenAPIView
 from auth_user.views import RegistrationAPIView, ProfileView, LoginAPIView
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
@@ -28,6 +28,7 @@ urlpatterns = [
     # notification
     path('api/v1/user/notification', UserNotificationsAPIView.as_view()),
     path('api/v1/user/notification/send', NotificationAPIView.as_view()),
+    path('api/v1/user/notification/refreshToken', NotificationRefreshTokenAPIView.as_view()),
 
     # top users
     path('api/v1/users/topusers', TopUsersListApiView.as_view()),
