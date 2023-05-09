@@ -61,6 +61,7 @@ class LoginAPIView(APIView):
             device.save()
             print('Success updated device')
         else:
+            FCMDevice.objects.filter(user=user).delete()
             fcm_device = FCMDevice()
             fcm_device.registration_id = token
             fcm_device.user = user
