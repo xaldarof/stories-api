@@ -21,8 +21,9 @@ class ReportStoryAPIView(APIView):
             report.user = self.request.user
             report.save()
             send_notification(user=story.user, title='Attention !',
-                              body='Your story has been reported. Please check the status of your story. If you '
-                                   'believe the report is false, please notify us at t.me/xaldarof')
+                              body='Your story ' + str(
+                                  story.title) + ' has been reported. Please check the status of your story. If you '
+                                                 'believe the report is false, please notify us at t.me/xaldarof')
             return Response("success")
         else:
             return Response("error", status=403)
