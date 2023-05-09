@@ -37,7 +37,7 @@ class NotificationRefreshTokenAPIView(APIView):
         device = FCMDevice.objects.filter(user=user).first()
         if device:
             device.registration_id = new_token
-            device.save()
+            device.save(update_fields=["registration_id"])
             return Response("success")
         else:
             return Response("not found", status=401)
