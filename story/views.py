@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage
 from django.db.models import Count, Sum, F, Q
 from django.http import JsonResponse
+from fcm_django.models import FCMDevice
 from rest_framework import generics
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly

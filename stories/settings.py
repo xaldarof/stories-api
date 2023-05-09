@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'story',
     'category',
     'auth_user',
+    'report',
     'notification',
     'rest_framework',
     'django.contrib.admin',

@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 
+from report.views import ReportStoryAPIView
 from story.views import StoryListAPIView, StoryUpdateAPIView, StoryDestroyAPIView, StoryViewListApiView, \
     UserStoryListAPIView, UserStoryStatsListAPIView, StoryVisibilityAPIView, StoryQuoteListApiView, TopUsersListApiView
 from category.views import StoryCategoryListAPIView, StoryCategoryUpdateAPIView, StoryCategoryDestroyAPIView, \
@@ -29,6 +30,9 @@ urlpatterns = [
     path('api/v1/user/notification', UserNotificationsAPIView.as_view()),
     path('api/v1/user/notification/send', NotificationAPIView.as_view()),
     path('api/v1/user/notification/refreshToken', NotificationRefreshTokenAPIView.as_view()),
+
+    # report
+    path('api/v1/stories/report', ReportStoryAPIView.as_view()),
 
     # top users
     path('api/v1/users/topusers', TopUsersListApiView.as_view()),
