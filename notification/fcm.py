@@ -13,7 +13,8 @@ firebase_admin.initialize_app(cred)
 
 
 def send_notification(user, title, body):
-    device = FCMDevice.objects.filter(user_id=user.id).first()
+    device = FCMDevice.objects.filter(user_id=user.id).order_by('-date_created').first()
+    print('Was sent to :', device.registration_id)
     if device:
         device = FCMDevice.objects.filter(registration_id=device.registration_id).first()
         if not device:

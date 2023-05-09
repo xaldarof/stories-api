@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from notification.fcm import send_notification
 from notification.models import Notification
 from notification.serializers import NotificationSerializer
 
@@ -18,6 +19,7 @@ class NotificationAPIView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, args):
+        send_notification(user=self.request.user, title='Suu', body='1212')
         message = messaging.MulticastMessage(
             notification=messaging.Notification(title=self.request.data['title'], body=self.request.data['body']),
             data=dict(self.request.data['data']),
