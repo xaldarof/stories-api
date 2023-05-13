@@ -36,7 +36,7 @@ class RegistrationAPIView(APIView):
             fcm_device.save()
             print('New created')
         return Response({
-            'refresh': str(refresh),
+            # 'refresh': str(refresh),
             'access': str(refresh.access_token),
         }, status=status.HTTP_201_CREATED)
 
@@ -70,7 +70,7 @@ class LoginAPIView(APIView):
             print('New created')
 
         return Response({
-            'refresh': str(refresh),
+            # 'refresh': str(refresh),
             'access': str(refresh.access_token)
         })
 
