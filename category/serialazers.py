@@ -15,7 +15,7 @@ class CategorySerializer(serializers.ModelSerializer):
     def get_count(self, obj):
         request_type = self.context.get('type')
         if request_type == 'for_all':
-            count = Story.objects.filter(category_id=obj.id).count()
+            count = Story.objects.filter(category_id=obj.id, is_published=True).count()
             return count
         else:
             user_id = self.context.get('user_id')

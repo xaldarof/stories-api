@@ -17,36 +17,27 @@ from .serialazers import StorySerializer, StoryViewSerializer, StoryUpdateSerial
 
 
 class StoryPaginationAPIView(PageNumberPagination):
-    page_size = 10
     page_query_param = 'page'
-    max_page_size = 1000
 
     def get_paginated_response(self, data):
         category_id = self.request.query_params.get('categoryId', None)
-        if category_id:
-            query_set = Story.objects.filter(category_id=category_id, is_published=True).order_by('?')
-        else:
-            query_set = Story.objects.filter(is_published=True).order_by('?')
-        paginator = Paginator(query_set, 10)
-        page_size = self.request.query_params.get('page')
-        if page_size:
-            try:
-                page = paginator.page(page_size)
-            except EmptyPage:
-                page = paginator.page(paginator.num_pages)
+        page = self.request.query_params.get('page')
 
+        query_set = Story.objects.filter(category_id=category_id, is_published=True).order_by('?')
+        paginator = Paginator(query_set, 10)
+
+        try:
+            page = paginator.page(int(page))
             serializer = StorySerializer(data=page, many=True, context={"request": self.request})
             serializer.is_valid()
             return Response({
-                "count": paginator.count,
-                'results': serializer.data,
-            })
-        else:
-            serializer = StorySerializer(data=query_set, many=True, context={"request": self.request})
-            serializer.is_valid()
-            return Response({
-                "count": paginator.count,
+                "count": query_set.count(),
                 "results": serializer.data,
+            })
+        except EmptyPage:
+            return Response({
+                "count": query_set.count(),
+                "results": [],
             })
 
 
