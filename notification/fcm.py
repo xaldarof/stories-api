@@ -14,7 +14,7 @@ firebase_admin.initialize_app(cred)
 
 def send_notification(user, title, body):
     device = FCMDevice.objects.filter(user_id=user.id).first()
-    print('Was sent to :', device.registration_id)
+    print('Was sent to :', device)
     if device:
         device = FCMDevice.objects.filter(registration_id=device.registration_id).first()
         if not device:
@@ -24,6 +24,6 @@ def send_notification(user, title, body):
                 Message(notification=Notification(title=title, body=body)
                         ))
             print("Result: ", response)
-            print("Token was", device.registration_id)
+            print("Token was", device)
     else:
         print("Register id not found")
